@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace Lab1 {
@@ -133,15 +134,28 @@ int main() {
       Lab1::TestCaseGenerator<double>(rows, cols));
   Lab1::InnerProduct<double> ip;
 
-  auto perf_trivial = pt.run(ip.trivial, 1000, 0);
-  std::cout << "Trivial Method:" << perf_trivial.str() << std::endl;
-  auto perf_cache_friendly = pt.run(ip.cache_friendly, 1000, 0);
-  std::cout << "Cache-Friendly Method:" << perf_cache_friendly.str()
+  std::string output_dir = "results/inner_product";
+  std::system("mkdir -p results/inner_product");
+
+  auto perf_trivial = pt.runAndSave(ip.trivial, "Trivial", output_dir, 1000, 0);
+  std::cout << "Trivial Algorithm: " << perf_trivial.str() << std::endl;
+
+  auto perf_cache_friendly =
+      pt.runAndSave(ip.cache_friendly, "CacheFriendly", output_dir, 1000, 0);
+  std::cout << "Cache-Friendly Algorithm: " << perf_cache_friendly.str()
             << std::endl;
-  auto perf_unrolled = pt.run(ip.unrolled_loop, 1000, 0);
-  std::cout << "Unrolled Method:" << perf_unrolled.str() << std::endl;
-  auto perf_eliminated_loop = pt.run(ip.eliminated_loop, 1000, 0);
-  std::cout << "Eliminated Loop Method:" << perf_eliminated_loop.str()
+
+  auto perf_unrolled =
+      pt.runAndSave(ip.unrolled_loop, "UnrolledLoop", output_dir, 1000, 0);
+  std::cout << "Unrolled Loop Algorithm: " << perf_unrolled.str() << std::endl;
+
+  auto perf_eliminated_loop =
+      pt.runAndSave(ip.eliminated_loop, "EliminatedLoop", output_dir, 1000, 0);
+  std::cout << "Eliminated Loop Algorithm: " << perf_eliminated_loop.str()
             << std::endl;
+
+  std::cout << "Detailed test data saved to " << output_dir << " directory"
+            << std::endl;
+
   return 0;
 }
